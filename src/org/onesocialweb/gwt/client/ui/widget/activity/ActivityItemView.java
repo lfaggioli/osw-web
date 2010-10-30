@@ -12,7 +12,10 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *    
+ *
+ *  2010-08-09 Modified by Luca Faggioli Copyright 2010 Openliven S.r.l
+ *  added code to handle comments (replies)
+ *
  */
 package org.onesocialweb.gwt.client.ui.widget.activity;
 
@@ -30,6 +33,7 @@ import org.onesocialweb.gwt.client.ui.dialog.PicturePreviewDialog;
 import org.onesocialweb.gwt.client.ui.widget.StyledFlowPanel;
 import org.onesocialweb.gwt.client.ui.widget.StyledLabel;
 import org.onesocialweb.gwt.client.ui.widget.StyledTooltipImage;
+import org.onesocialweb.gwt.client.ui.widget.compose.CommentPanel;
 import org.onesocialweb.gwt.client.ui.window.ProfileWindow;
 import org.onesocialweb.gwt.client.util.FormatHelper;
 import org.onesocialweb.gwt.service.OswService;
@@ -62,6 +66,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+/**
+ * @author dcheng
+ *
+ */
 public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		HasMouseOverHandlers, MouseOutHandler, HasMouseOutHandlers {
 	
@@ -70,12 +78,20 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 	
 	private HTML statusLabel = new HTML();
 	private HTML infoLabel = new HTML();
+	//private final RepliesPanel repliesPanel = new RepliesPanel();
+	private /*final*/ CommentPanel commentPanel = new CommentPanel();
+
+	
+
 	private StyledTooltipImage avatarImage = new StyledTooltipImage("", "link",
 			uiText.ViewProfile());
 	private StyledFlowPanel avatarwrapper = new StyledFlowPanel("avatarwrapper");
 	private StyledTooltipImage infoIcon = new StyledTooltipImage(OswClient
 			.getInstance().getPreference("theme_folder")
 			+ "assets/i-info.png", "icon", "");
+	private StyledTooltipImage emptyIcon = new StyledTooltipImage(OswClient
+			.getInstance().getPreference("theme_folder")
+			+ "assets/i-empty.png", "icon", "");
 	private HorizontalPanel hpanel = new HorizontalPanel();
 	private FlowPanel attachmentswrapper = new StyledFlowPanel("attachments");
 	private StyledTooltipImage statusIcon = new StyledTooltipImage(OswClient
@@ -85,15 +101,25 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 
 	private ActivityButtonHandler handler;
 	private final ActivityEntry activity;
-	private boolean isUpdating = false;
+//	private boolean isUpdating = false;
 	
 	private StyledFlowPanel statusActivity = new StyledFlowPanel("statusActivity");
 	
-	private StyledLabel author = new StyledLabel("link", "");
+//	private StyledLabel author = new StyledLabel("link", "");
+	
+	protected final StyledFlowPanel replieswrapper = new StyledFlowPanel("author-wrapper");
+	private String recipientActivityID = null;
+	private boolean commentNotification = false;
+	
+	private boolean expanded;
 
-	public ActivityItemView(final ActivityEntry activity) {
+	public CommentPanel getCommentPanel() {
+		return commentPanel;
+	}
+
+	public ActivityItemView(final ActivityEntry activity, boolean expand) {
 				
-		
+		this.expanded=expand;
 		this.activity = activity;
 		
 		// add the mouseOver handlers
@@ -106,8 +132,8 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		StyledFlowPanel statuswrapper2 = new StyledFlowPanel("wrapper2");
 		StyledFlowPanel infowrapper = new StyledFlowPanel("wrapper");
 		StyledFlowPanel authorWrapper = new StyledFlowPanel("author-wrapper");
-		
-		author.setText(activity.getActor().getName());
+		StyledLabel author = new StyledLabel("link", activity.getActor()
+				.getName());
 		authorWrapper.add(author);
 		final OswService service = OswServiceFactory.getService();
 		
@@ -128,7 +154,13 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 					.iterator();
 			while (recipients.hasNext()) {
 				final AtomReplyTo recipient = recipients.next();
-				final String recipientJID = recipient.getHref();
+
+				recipientActivityID = extractRecipientActivityID(recipient.getHref());
+				if(recipientActivityID != null) {
+					commentNotification = true;
+				}
+
+				final String recipientJID = extractRecipientJID(recipient.getHref());
 				final StyledLabel label = new StyledLabel("link", recipientJID);
 				label.setTitle(uiText.ViewProfileOf() + recipientJID);
 
@@ -180,6 +212,9 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		flow.add(statuswrapper);
 		flow.add(attachmentswrapper);
 		flow.add(infowrapper);
+		flow.add(replieswrapper);
+		replieswrapper.add(emptyIcon);
+
 
 		hpanel.add(avatarwrapper);
 		avatarwrapper.getElement().setAttribute(
@@ -217,12 +252,56 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		}
 
 		statusLabel.setText(" - " + activity.getTitle());
+
+		if(!commentNotification) {
+			if(activity.hasReplies()) {
+				final StyledLabel repliesLabel = new StyledLabel("replies-link", "Comments: " +
+						activity.getRepliesLink().getCount());
+				
+				if (expand){
+					commentPanel.compose(activity);
+					replieswrapper.add(commentPanel);
+					repliesLabel.setVisible(false);
+				}
+
+				repliesLabel.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						commentPanel.compose(activity);
+						replieswrapper.add(commentPanel);
+						repliesLabel.setVisible(false);
+						AbstractActivityPanel parent =(AbstractActivityPanel) getParent();
+						parent.addExpanded(activity.getId());
+						//setExpanded(true);
+					}
+				});
+
+				replieswrapper.add(repliesLabel);
+			} else {
+				final StyledLabel repliesLabel = new StyledLabel("replies-link", "Add a comment");
+
+				repliesLabel.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						commentPanel.compose(activity);
+						replieswrapper.add(commentPanel);
+						repliesLabel.setVisible(false);							
+						AbstractActivityPanel parent =(AbstractActivityPanel) getParent();
+						parent.addExpanded(activity.getId());
+						//setExpanded(true);
+					}
+				});
+
+				replieswrapper.add(repliesLabel);
+			}
+		}
+
 		String info = "";
 		info += getFormattedDate(activity.getPublished());
 		if (!visibility.isEmpty())
 			info += " - " + uiText.VisibleTo() + " " + FormatHelper.implode(visibility, ", ");
 		// if (location != "") info += " - From: " + location;
 		// if (tags != "") info += " - Tagged: " + tags;
+		if(commentNotification)
+			info += " - This is a comment to a previous post";
 
 		infoLabel.setText(info);
 		author.setTitle(uiText.ViewProfileOf() + " " + activity.getActor().getUri());
@@ -259,6 +338,9 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 				profileWindow.show();
 			}
 		});
+
+		this.addMouseOverHandler(this);
+		this.addMouseOutHandler(this);
 
 		// Fetch the avatar image
 		service.getProfile(activity.getActor().getUri(),
@@ -315,6 +397,13 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		}
 	}
 
+
+	public ActivityEntry getActivity() {
+		return activity;
+	}
+
+
+
 	public void onMouseOver(MouseOverEvent event) {
 		select();
 	}
@@ -348,6 +437,19 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		this.handler = handler;
 	}
 
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+
+	/*	if(commentNotification) {
+			Widget parent = getParent();
+			if(parent instanceof InboxPanel) {
+				InboxPanel inbox = (InboxPanel) parent;
+				inbox.updateActivityReplies(recipientActivityID);
+			}
+		} */
+	}
+	
 	public void removeSelect() {
 		statusActivity.removeStyleName("selected");
 	}
@@ -355,7 +457,7 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 	public void addSelect() {
 		statusActivity.addStyleName("selected");
 	}
-	
+
 	private void select() {
 		statusActivity.addStyleName("selected");
 		handler.handleShow(this.getAbsoluteTop(), this);
@@ -377,6 +479,15 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 
 	private void showAttachments() {
 		// addPhotoAttachment("http://www.iwatchstuff.com/2008/05/30/emily-the-strange-movie.jpg");
+	}
+	
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
 	}
 
 	private void addPictureAttachment(ActivityObject object) {
@@ -531,5 +642,42 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 			statusIcon.setTitle("Not available");
 		}
 	}
+
+	private String extractRecipientJID(String recipientHref) {
+		if(recipientHref.startsWith("xmpp:")) {
+			int i = recipientHref.indexOf("?");
+			if(i == -1) {
+				return "";
+			}
+			else {
+				return recipientHref.substring(5, i);
+			}
+		}
+		else {
+			return recipientHref;
+		}
+	}
+
+	private String extractRecipientActivityID(String recipientHref) {
+
+		if(recipientHref.startsWith("xmpp:")) {
+			int i = recipientHref.indexOf("item=");
+			if(i == -1) {
+				return null;
+			}
+			else {
+				return recipientHref.substring(i+5);
+			}
+		}
+		else {
+			return null;
+		}
+
+	}
+	
+	
+
+	
+	
 
 }

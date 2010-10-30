@@ -13,6 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *    
+ *  2010-08-19 Modified by Luca Faggioli Copyright 2010 Openliven S.r.l
+ *  added updateActivityReplies()
+ *  
  */
 package org.onesocialweb.gwt.client.ui.widget.activity;
 
@@ -37,16 +40,17 @@ public class InboxPanel extends AbstractActivityPanel<ActivityEntry> {
 		buttons.setVisible(false);
 	}
 
+	
 	@Override
-	protected Widget render(final ActivityEntry activityEntry) {
+	protected Widget render(final ActivityEntry activityEntry, boolean expand) {
 		
 		if (activityEntry.getId()==null)
 			return null;
-		
+
 		if (activityEntry.getActor()==null)
 			return null;
-		
-		ActivityItemView sa = new ActivityItemView(activityEntry);
+
+		ActivityItemView sa = new ActivityItemView(activityEntry, expand);
 		sa.setButtonHandler(new ActivityButtonHandler() {
 			public void handleShow(int top, ActivityItemView sa) {
 				

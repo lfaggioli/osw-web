@@ -13,6 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *    
+ *  2010-08-17 Modified by Luca Faggioli Copyright 2010 Openliven S.r.l
+ *  replaced ActivityItemView with FeedItemView in order to prevent users
+ *  to post comments to a comment
+ *  
  */
 package org.onesocialweb.gwt.client.ui.widget.activity;
 
@@ -37,8 +41,8 @@ public class FeedPanel extends AbstractActivityPanel<ActivityEntry> {
 	}
 
 	@Override
-	protected Widget render(final ActivityEntry activityEntry) {
-		ActivityItemView sa = new ActivityItemView(activityEntry);
+	protected Widget render(final ActivityEntry activityEntry, boolean expand) {
+		ActivityItemView sa = new ActivityItemView(activityEntry, expand);
 		sa.setButtonHandler(new ActivityButtonHandler() {
 			public void handleShow(int top, ActivityItemView sa) {
 				
@@ -64,6 +68,10 @@ public class FeedPanel extends AbstractActivityPanel<ActivityEntry> {
 				}
 				
 				showButtons(top);
+				// force selecting the activity
+				if (!sa.getStyleName().equals("selected"))
+					sa.addStyleName("selected");
+				lastSelected = sa;
 			}
 
 			public void handleHide() {
