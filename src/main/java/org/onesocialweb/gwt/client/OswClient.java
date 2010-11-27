@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *    
+ *
  */
 package org.onesocialweb.gwt.client;
 
@@ -45,10 +45,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 
 public class OswClient {
-	
+
 	// internationalization
 	private UserInterfaceText uiText = (UserInterfaceText) GWT.create(UserInterfaceText.class);
-	
+
 	private static OswClient instance;
 
 	private Map<String, String> preferences = new HashMap<String, String>();
@@ -68,10 +68,10 @@ public class OswClient {
 	}
 
 	public void start() {
-		
+
 		// set the locale if defined
 		setLocale();
-		
+
 		// Prepare the environment
 		this.service = OswServiceFactory.getService();
 		loadPreferences();
@@ -202,47 +202,47 @@ public class OswClient {
 	}
 
 	private void setLocale() {
-		
+
 		// set locale based on the presence of a stored value in the LocalStorage
-		
+
 		// Set the available OSW locale values
 		initLocales();
-		
+
 		// get the locale parameter from the url
 		String localeUrl = Location.getParameter("locale");
-		
+
 		// get the locale from the storage
 		String localeStored = "";
 		if (Storage.isSupported()) {
 			Storage localStorage = Storage.getLocalStorage();
 			localeStored = localStorage.getItem("locale");
 		}
-		
+
 		// if the locale is not present
 		if (localeUrl == null && localeStored != null) {
-			
+
 			if (OSWLocales.containsKey(localeStored)) {
 				OSWUrlBuilder urlBuilder = new OSWUrlBuilder();
-				urlBuilder.setParameter("locale", localeStored); 
+				urlBuilder.setParameter("locale", localeStored);
 				Window.Location.replace(urlBuilder.buildString());
 			} else {
 				OSWUrlBuilder urlBuilder = new OSWUrlBuilder();
-				urlBuilder.removeParameter("locale"); 
+				urlBuilder.removeParameter("locale");
 				Window.Location.replace(urlBuilder.buildString());
 			}
-			
+
 		}
 	}
-	
+
 	private void createSession() {
-		
+
 		sessionActive = true;
-		
+
 		// create a new mainmenu
 		initMenu();
 
 		// fire the first application
-		
+
 		// if there is an application in the URL use that
 		// get the locale parameter from the url
 		String hash = Location.getHash();
@@ -251,7 +251,7 @@ public class OswClient {
 		if (hash != null && hash.length() > 0) {
 			application = hash.substring(1);
 		}
-		
+
 		if (application.length() > 0) {
 			showApplication(application);
 		} else {
@@ -278,14 +278,14 @@ public class OswClient {
 		currentApplication.destroy();
 		currentApplication = null;
 	}
-	
+
 	private void initLocales() {
 		OSWLocales.put("default", "English");
 		OSWLocales.put("nl", "Nederlands");
+		OSWLocales.put("fr", "FranÃ§ais");
 		OSWLocales.put("it", "Italiano");
-		OSWLocales.put("fr", "French");
 	}
-	
+
 	private void initMenu() {
 
 		List<MenuCommand> commands = new ArrayList<MenuCommand>();
