@@ -258,11 +258,11 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		
 		//add the activity context, with formatted links (clickable) and mentions
 		String activityContent = activity.getTitle();
-		if(activityContent.indexOf("http://")>=0 || activityContent.indexOf("@")>=0) {
+		if(activityContent.indexOf("http://")>=0 || activityContent.indexOf("https://")>=0 || activityContent.indexOf("@")>=0) {
 		String[] tokens = activityContent.split("\\s+");
 			for(int i=0; i<tokens.length; i++) {
 				String token = tokens[i];
-				if(token.startsWith("http://")) {
+				if(token.startsWith("http://") || token.startsWith("https://")) {
 					statuswrapper2.add(formatLink(token, i));
 				} else if(token.startsWith("@")) {
 					statuswrapper2.add(formatMention(service, token.substring(1), i));
