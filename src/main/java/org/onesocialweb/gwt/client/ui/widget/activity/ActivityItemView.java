@@ -745,7 +745,7 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 		
 		statuswrapper.add(new HTML(" - "));
 		//add the activity context, with formatted links (clickable) and mentions	
-		if(activityContent.indexOf("http://")>=0 || activityContent.indexOf("https://")>=0 || activityContent.indexOf("@")>=0) {
+		if(activityContent!=null && (activityContent.indexOf("http://")>=0 || activityContent.indexOf("https://")>=0 || activityContent.indexOf("@")>=0)) {
 		String[] tokens = activityContent.split("\\s+");
 			for(int i=0; i<tokens.length; i++) {
 				String token = tokens[i];
