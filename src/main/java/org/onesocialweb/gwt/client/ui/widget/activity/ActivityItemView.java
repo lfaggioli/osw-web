@@ -75,7 +75,7 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 	
 	// internationalization
 	private UserInterfaceText uiText = (UserInterfaceText) GWT.create(UserInterfaceText.class);
-	private HTML statusLabel = new HTML();
+	
 	private HTML infoLabel = new HTML();
 	private /*final*/ CommentPanel commentPanel = new CommentPanel();
 	private boolean editing=false;
@@ -148,7 +148,8 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 
 	public ActivityItemView(final ActivityEntry activity, boolean expand, int unread) {
 						
-	
+		if (activity.getTitle()==null)
+			activity.setTitle("");
 		
 		this.expanded=expand;
 		this.activity = activity;			
@@ -739,6 +740,7 @@ public class ActivityItemView extends FlowPanel implements MouseOverHandler,
 	}
 	
 	public void formatContent(StyledFlowPanel statuswrapper, String activityContent){
+		
 		
 		
 		final OswService service = OswServiceFactory.getService();
