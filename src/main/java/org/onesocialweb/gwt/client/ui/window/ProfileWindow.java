@@ -208,7 +208,7 @@ public class ProfileWindow extends AbstractWindow {
 		if (model != null) {
 			fullName = model.getFullName();
 			if (fullName != null && fullName.length() > 0) {
-				displayname.setText(fullName);
+				displayname.setText(fullName + " (" + jid + ")");
 			} else {
 				displayname.setText(jid);
 			}
