@@ -1434,6 +1434,12 @@ img.logo {
 	background-color: #fec000;
 	padding: 10px;
 	}
+	
+.important {
+	background-color: #f33030;
+	padding: 10px;
+	font-weight: bold;
+	}
 
 /*
 	Footer

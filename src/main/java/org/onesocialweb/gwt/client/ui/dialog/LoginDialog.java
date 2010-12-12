@@ -124,6 +124,11 @@ public class LoginDialog extends AbstractDialog {
 		FlowPanel loginflow = new FlowPanel();
 
 		FlowPanel registerflow = new FlowPanel();
+		
+		FieldLabel registerCodeReqMessage = new FieldLabel(
+				OswClient.getInstance().getPreference("registration_code_req_message"));
+		registerCodeReqMessage.setStyleName("important");
+		
 		FieldLabel usernameRegister = new FieldLabel(uiText.ChooseUsername());
 		FieldLabel passwordRegister = new FieldLabel(uiText.ChoosePassword());
 		FieldLabel emailRegister = new FieldLabel(uiText.EnterYourEmail());
@@ -156,6 +161,8 @@ public class LoginDialog extends AbstractDialog {
 		loginflow.add(passwordText);
 		loginflow.add(rememberme);
 
+		if(!"".equals(registerCodeReqMessage.getText().trim()))
+			registerflow.add(registerCodeReqMessage);
 		registerflow.add(usernameRegister);
 		registerflow.add(usernameTextRegister);
 		registerflow.add(usernameRegisterError);

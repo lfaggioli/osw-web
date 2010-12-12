@@ -54,7 +54,12 @@
 			registration_allowed: "true",
 
 			// If true, allows registration on this server only via a registration code
-			registration_code: "true"
+			registration_code: "true",
+			
+			//message to show in the registration tab
+			//example: For Registration Codes please send an email to social@openliven.com
+			registration_code_req_message: ""
+			
 		};
 	</script>
 
