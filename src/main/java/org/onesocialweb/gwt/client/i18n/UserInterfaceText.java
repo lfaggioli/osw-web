@@ -51,6 +51,8 @@ public interface UserInterfaceText extends Constants {
 	String YourPassword();
 	String ChooseUsername();
 	String ChoosePassword();
+	String ConfirmPassword();
+	String EnterYourName();
 	String EnterYourEmail();
 	String EnterCode();
 	String Following();

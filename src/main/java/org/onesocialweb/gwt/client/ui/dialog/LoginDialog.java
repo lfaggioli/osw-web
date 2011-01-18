@@ -12,6 +12,9 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  
+ *  2011-01-18 Modified by Luca Faggioli Copyright 2011 Openliven S.r.l
+ *  added fields for Name and Confirm Password in the registration form
  *    
  */
 package org.onesocialweb.gwt.client.ui.dialog;
@@ -46,12 +49,14 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import eu.maydu.gwt.validation.client.DefaultValidationProcessor;
 import eu.maydu.gwt.validation.client.ValidationProcessor;
 import eu.maydu.gwt.validation.client.actions.StyleAction;
 import eu.maydu.gwt.validation.client.validators.StringLengthValidator;
+import eu.maydu.gwt.validation.client.validators.multifield.MultiStringsEqualsValidator;
 import eu.maydu.gwt.validation.client.validators.strings.EmailValidator;
 
 public class LoginDialog extends AbstractDialog {
@@ -131,14 +136,20 @@ public class LoginDialog extends AbstractDialog {
 		
 		FieldLabel usernameRegister = new FieldLabel(uiText.ChooseUsername());
 		FieldLabel passwordRegister = new FieldLabel(uiText.ChoosePassword());
+		FieldLabel confirmPasswordRegister = new FieldLabel(uiText.ConfirmPassword());
+		FieldLabel nameRegister = new FieldLabel(uiText.EnterYourName());
 		FieldLabel emailRegister = new FieldLabel(uiText.EnterYourEmail());
 		FieldLabel codeRegister = new FieldLabel(uiText.EnterCode());
 		final TextBox usernameTextRegister = new TextBox();
 		final PasswordTextBox passwordTextRegister = new PasswordTextBox();
+		final PasswordTextBox confirmPasswordTextRegister = new PasswordTextBox();
+		final TextBox nameTextRegister = new TextBox();
 		final TextBox emailTextRegister = new TextBox();
 		final TextBox codeTextRegister = new TextBox();
 		ErrorLabel usernameRegisterError = new ErrorLabel();
 		ErrorLabel passwordRegisterError = new ErrorLabel();
+		ErrorLabel confirmPasswordRegisterError = new ErrorLabel();
+		ErrorLabel nameRegisterError = new ErrorLabel();
 		ErrorLabel emailRegisterError = new ErrorLabel();
 		ErrorLabel codeRegisterError = new ErrorLabel();
 
@@ -169,6 +180,12 @@ public class LoginDialog extends AbstractDialog {
 		registerflow.add(passwordRegister);
 		registerflow.add(passwordTextRegister);
 		registerflow.add(passwordRegisterError);
+		registerflow.add(confirmPasswordRegister);
+		registerflow.add(confirmPasswordTextRegister);
+		registerflow.add(confirmPasswordRegisterError);
+		registerflow.add(nameRegister);
+		registerflow.add(nameTextRegister);
+		registerflow.add(nameRegisterError);
 		registerflow.add(emailRegister);
 		registerflow.add(emailTextRegister);
 		registerflow.add(emailRegisterError);
@@ -249,6 +266,10 @@ public class LoginDialog extends AbstractDialog {
 				field.addValue(passwordTextRegister.getText());
 				form.addField(field);
 				
+				field = new GwtFormField("name");		
+				field.addValue(nameTextRegister.getText());
+				form.addField(field);
+				
 				
 				field = new GwtFormField("email");		
 				field.addValue(emailTextRegister.getText());
@@ -307,6 +328,17 @@ public class LoginDialog extends AbstractDialog {
 				passwordTextRegister, 4, 25).addActionForFailure(
 				new StyleAction("validationFailed")).addActionForFailure(
 				new CustomLabelTextAction(passwordRegisterError, false)));
+		
+		validator.addValidators("Password2", new MultiStringsEqualsValidator(new TextBoxBase[] {
+				passwordTextRegister, confirmPasswordTextRegister
+        }).addActionForFailure(
+				new StyleAction("validationFailed")).addActionForFailure(
+				new CustomLabelTextAction(confirmPasswordRegisterError, false)));
+		
+		validator.addValidators("Name", new StringLengthValidator(
+				nameTextRegister, 1, 25).addActionForFailure(
+				new StyleAction("validationFailed")).addActionForFailure(
+				new CustomLabelTextAction(nameRegisterError, false)));
 
 		validator.addValidators("Email", new EmailValidator(emailTextRegister)
 				.addActionForFailure(new StyleAction("validationFailed"))
