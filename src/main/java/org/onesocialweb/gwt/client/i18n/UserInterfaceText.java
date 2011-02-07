@@ -45,8 +45,8 @@ public interface UserInterfaceText extends Constants {
 	String Account();
 	String Add();
 	String PostComment();
+	String CreateList();
 	
-
 	// Labels
 	String YourUsername();
 	String YourPassword();
@@ -159,6 +159,7 @@ public interface UserInterfaceText extends Constants {
 	String EmptyUpdate();
 	String RegistrationSuccess();
 	String PleaseLogin();
+	String NoStatusUpdates();
 	
 	// Error 
 	String FailedToGetProfile();

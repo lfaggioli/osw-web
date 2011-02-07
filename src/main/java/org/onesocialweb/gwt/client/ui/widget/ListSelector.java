@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.onesocialweb.gwt.client.i18n.UserInterfaceText;
 import org.onesocialweb.gwt.client.task.DefaultTaskInfo;
 import org.onesocialweb.gwt.client.task.TaskMonitor;
 import org.onesocialweb.gwt.client.task.TaskInfo.Status;
@@ -28,6 +29,7 @@ import org.onesocialweb.gwt.service.OswServiceFactory;
 import org.onesocialweb.gwt.service.RequestCallback;
 import org.onesocialweb.gwt.service.RosterItem;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -39,6 +41,9 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class ListSelector extends FlowPanel {
 
+	// internationalization
+	private UserInterfaceText uiText = (UserInterfaceText) GWT.create(UserInterfaceText.class);
+	
 	private StyledFlowPanel wrapper = new StyledFlowPanel("wrapper");
 
 	private final RosterItem rosterItem;
@@ -54,7 +59,7 @@ public class ListSelector extends FlowPanel {
 		add(buttons);
 
 		final TextBox input = new TextBox();
-		Button add = new Button("Create new list");
+		Button add = new Button(uiText.CreateList());
 		buttons.add(input);
 		buttons.add(add);
 
