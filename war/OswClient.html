@@ -26,35 +26,45 @@
 <script type="text/javascript" language="javascript">
   		var preferences = {
 
-			// It is easy to change the styling of this client, just point this variable to another theme folder  		  		
+			// It is easy to change the styling of this client, just point this variable to another theme folder
 		  	theme_folder: "themes/osw/",
 
 		  	// What name to use when presenting this service to the user
 		  	service_name: "Onesocialweb",
 
-		  	// The XMPP server to which this client can connect over BOSH. Carefull that most browsers 
+		  	// The XMPP server to which this client can connect over BOSH. Carefull that most browsers
 		  	// won't allow connecting to a host which is not the same as the one serving these pages
-		  	bosh_host: "onesocialweb.local", 
+		  	bosh_host: "onesocialweb.local",
 
 		  	// Absolute path to the BOSH endpoint
-		  	bosh_path: "/OswClient/bosh",
+		  	bosh_path: "/bosh",
 
 		  	// What the XMPP domain is
 		  	xmpp_domain: "onesocialweb.local",
 
 		  	// Absolute path to the file servlet
-		  	upload_endpoint: "/OswClient/file",
+		  	upload_endpoint: "/file",
 		  	file_retrieval_endpoint: "http://test.onesocialweb.local/file",
+
+		  	email_endpoint: "/email",
 
 		  	// If true, we may do a bit more of logging
 			developer_mode: "true",
-			
-			
-			// If true, allows registration on this server
-			registration_allowed: "true",
 
-			// If true, allows registration on this server only via a registration code
-			registration_code: "true"
+
+			// If true, allows registration on this server
+			registration_allowed: "false",
+
+			// If true, allows registration on this server only via a registration code which needs to be manually created by the admin
+			registration_code: "true",
+
+			// If true, provision of registration codes is automatic per email
+			registration_email: "false",
+
+			//message to be shown in the registration tab
+			//example: For Registration Codes please send an email to social@openliven.com
+			registration_code_req_message: "do you need a registration code? request one at social@openliven.com"
+
 		};
 	</script>
 
